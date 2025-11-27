@@ -4,6 +4,7 @@ import * as GUI from 'babylonjs-gui';
 import { JsonService } from './JsonService';
 import { LineService } from './LineService';
 import { UploadService } from './UploadService';
+import {DrawService} from "./DrawService";
 
 export class SceneService {
     createScene(engine: BABYLON.Engine, canvas: HTMLCanvasElement): BABYLON.Scene {
@@ -31,25 +32,14 @@ export class SceneService {
 
         const jsonService = new JsonService();
         const lineService = new LineService(scene, { lineWidth: 0.1 });
+        const drawService = new DrawService(lineService);
 
         button.onPointerUpObservable.add(() => {
             UploadService.uploadJson((jsonContent) => {
                 const construction = jsonService.deserialize(jsonContent);
                 console.log('Deserialized construction:', construction);
 
-                // Clear previously drawn lines
-                lineService.clearAllLines();
-
-                // Draw a line for each member between its two nodes
-                const geom = construction.geometry;
-                for (const m of geom.members) {
-                    const n1 = geom.idToNode.get(m.node1Id);
-                    const n2 = geom.idToNode.get(m.node2Id);
-                    if (!n1 || !n2) continue;
-                    const p1 = new BABYLON.Vector3(n1.x, n1.y, n1.z);
-                    const p2 = new BABYLON.Vector3(n2.x, n2.y, n2.z);
-                    lineService.drawLine(p1, p2, { color: new BABYLON.Color3(0.2, 0.6, 0.9) });
-                }
+                drawService.drawConstruction(construction);
             });
         });
 
