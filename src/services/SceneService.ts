@@ -8,18 +8,18 @@ import {DrawService} from "./DrawService";
 
 export class SceneService {
     createScene(engine: BABYLON.Engine, canvas: HTMLCanvasElement): BABYLON.Scene {
-        var scene = new BABYLON.Scene(engine);
+        const scene = new BABYLON.Scene(engine);
 
-        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 20, new BABYLON.Vector3(20, -20, 20), scene);
+        const camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 20, new BABYLON.Vector3(20, -20, 20), scene);
         camera.setTarget(new BABYLON.Vector3(20, 20, 10));
         camera.attachControl(canvas, true);
 
-        var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
         light.intensity = 0.7;
 
         //UI
-        var advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        var button = GUI.Button.CreateSimpleButton("btnLoadJson", "Load Json");
+        const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        const button = GUI.Button.CreateSimpleButton("btnLoadJson", "Load Json");
         button.width = "120px";
         button.height = "40px";
         button.color = "white";
@@ -31,7 +31,7 @@ export class SceneService {
         advancedTexture.addControl(button);
 
         const jsonService = new JsonService();
-        const lineService = new LineService(scene, { lineWidth: 0.1 });
+        const lineService = new LineService(scene, { lineWidth: 0.08 });
         const drawService = new DrawService(lineService);
 
         button.onPointerUpObservable.add(() => {

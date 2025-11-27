@@ -7,9 +7,9 @@ export enum LineType {
 
 export class LineService {
     private _lines: BABYLON.Mesh[] = [];
-    private _scene: BABYLON.Scene;
-    private _lineWidth: number;
-    private _defaultLineType: LineType;
+    private readonly _scene: BABYLON.Scene;
+    private readonly _lineWidth: number;
+    private readonly _defaultLineType: LineType;
 
     constructor(scene: BABYLON.Scene, options: { lineWidth: number, lineType?: LineType }) {
         this._scene = scene;
