@@ -1,6 +1,7 @@
 import * as BABYLON from 'babylonjs';
 // @ts-ignore: IDE sometimes can't resolve babylonjs-gui's declaration bundling
 import * as GUI from 'babylonjs-gui';
+import { JsonService } from './JsonService';
 
 export class SceneService {
     createScene(engine: BABYLON.Engine, canvas: HTMLCanvasElement): BABYLON.Scene {
@@ -36,6 +37,58 @@ export class SceneService {
         button.left = "-320px";
         button.top = "-250px";
         advancedTexture.addControl(button);
+
+        // Json loader
+        const jsonService = new JsonService();
+        button.onPointerUpObservable.add(() => {
+            const sampleJson = `{
+  "Geometry": {
+    "Nodes": [
+      {
+        "ID": 1,
+        "X": 0,
+        "Y": 4.5,
+        "Z": -0.3
+      },
+      {
+        "ID": 2,
+        "X": -0.10945409092309966,
+        "Y": 10.5,
+        "Z": 7.494540909230988
+      },
+      {
+        "ID": 3,
+        "X": -0.10945409092309966,
+        "Y": 16.5,
+        "Z": 7.494540909230988
+      }
+    ],
+    "Members": [
+      {
+        "ID": 1,
+        "N1": 1,
+        "N2": 2
+      },
+      {
+        "ID": 2,
+        "N1": 2,
+        "N2": 3
+      },
+      {
+        "ID": 3,
+        "N1": 3,
+        "N2": 1
+      }
+    ],
+    "Sections": {}
+  },
+  "Materials": {},
+  "Constraints": {},
+  "Releases": {}
+}`;
+            const construction = jsonService.deserialize(sampleJson);
+            console.log('Deserialized construction:', construction);
+        });
 
         // Our built-in 'sphere' shape.
         var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 2, segments: 32 }, scene);
