@@ -2,32 +2,22 @@ import * as BABYLON from 'babylonjs';
 // @ts-ignore: IDE sometimes can't resolve babylonjs-gui's declaration bundling
 import * as GUI from 'babylonjs-gui';
 import { JsonService } from './JsonService';
+import { LineService } from './LineService';
 
 export class SceneService {
     createScene(engine: BABYLON.Engine, canvas: HTMLCanvasElement): BABYLON.Scene {
-        // This creates a basic Babylon Scene object (non-mesh)
         var scene = new BABYLON.Scene(engine);
 
-        // This creates and positions a free camera (non-mesh)
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
-
-        // This targets the camera to scene origin
         camera.setTarget(BABYLON.Vector3.Zero());
-
-        // This attaches the camera to the canvas
         camera.attachControl(canvas, true);
 
-        // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
         var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-
-        // Default intensity is 1. Let's dim the light a small amount
         light.intensity = 0.7;
 
         //UI
         var advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-
         var button = GUI.Button.CreateSimpleButton("btnLoadJson", "Load Json");
-        // place button in the bottom-right with a small margin
         button.width = "120px";
         button.height = "40px";
         button.color = "white";
@@ -38,8 +28,9 @@ export class SceneService {
         button.top = "-250px";
         advancedTexture.addControl(button);
 
-        // Json loader
         const jsonService = new JsonService();
+        const lineService = new LineService(scene, { lineWidth: 0.1 });
+
         button.onPointerUpObservable.add(() => {
             const sampleJson = `{
   "Geometry": {
@@ -88,9 +79,29 @@ export class SceneService {
 }`;
             const construction = jsonService.deserialize(sampleJson);
             console.log('Deserialized construction:', construction);
+
+            // Clear previously drawn lines
+            lineService.clearAllLines();
+
+            lineService.drawLine(new BABYLON.Vector3(1, 1, 1),
+                new BABYLON.Vector3(2, 2, 2));
+            lineService.drawLine(new BABYLON.Vector3(2, 2, 2),
+                new BABYLON.Vector3(3, 0, 3));
+            lineService.drawLine(new BABYLON.Vector3(3, 0, 3),
+                new BABYLON.Vector3(1, 1, 1));
+            // Draw a line for each member between its two nodes
+            /*const geom = construction.geometry;
+            for (const m of geom.members) {
+                const n1 = geom.idToNode.get(m.node1Id);
+                const n2 = geom.idToNode.get(m.node2Id);
+                if (!n1 || !n2) continue;
+                const p1 = new BABYLON.Vector3(n1.x, n1.y, n1.z);
+                const p2 = new BABYLON.Vector3(n2.x, n2.y, n2.z);
+                lineService.drawLine(p1, p2, { color: new BABYLON.Color3(0.2, 0.6, 0.9) });
+            }*/
         });
 
-        // Our built-in 'sphere' shape.
+        /*// Our built-in 'sphere' shape.
         var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 2, segments: 32 }, scene);
         // Move the sphere upward 1/2 its height
         let startPos = 2;
@@ -125,7 +136,7 @@ export class SceneService {
             if (Math.abs(sphereVelocity) <= gravity && newY < 1 + gravity) {
                 sphere.position.y = startPos++;
             }
-        });
+        });*/
 
         return scene;
     }
