@@ -9,14 +9,14 @@ export enum LineType {
 export class LineService {
     private _lines: BABYLON.Mesh[] = [];
     private readonly _scene: BABYLON.Scene;
-    private readonly _lineWidth: number;
+    private readonly lineSize: number;
     private readonly _defaultLineType: LineType;
 
     private _lineType: LineType;
 
     constructor(scene: BABYLON.Scene, options: { lineWidth: number, lineType?: LineType }) {
         this._scene = scene;
-        this._lineWidth = options.lineWidth;
+        this.lineSize = options.lineWidth;
         this._defaultLineType = options.lineType ?? LineType.Box;
         this._lineType = this._defaultLineType;
     }
@@ -34,8 +34,8 @@ export class LineService {
         switch (lineType) {
             case LineType.Box:
                 line = BABYLON.MeshBuilder.CreateBox("line", {
-                    width: this._lineWidth,
-                    height: this._lineWidth,
+                    width: this.lineSize,
+                    height: this.lineSize,
                     depth: distance
                 }, this._scene);
                 break;
@@ -43,7 +43,7 @@ export class LineService {
             case LineType.Cylinder:
                 line = BABYLON.MeshBuilder.CreateCylinder("line", {
                     height: distance,
-                    diameter: this._lineWidth
+                    diameter: this.lineSize
                 }, this._scene);
                 break;
 

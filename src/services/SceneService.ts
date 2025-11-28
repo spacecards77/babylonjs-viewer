@@ -80,15 +80,15 @@ export class SceneService {
         uiTexture.addControl(lineTypeDropdown);
 
         const group = new GUI.RadioGroup("Line Type");
-        group.addRadio("Box", (ind) => {
+        group.addRadio("Box", () => {
             this.lineType = LineType.Box;
             this.drawConstruction();
         }, true);
-        group.addRadio("Cylinder", (ind) => {
+        group.addRadio("Cylinder", () => {
             this.lineType = LineType.Cylinder;
             this.drawConstruction();
         });
-        group.addRadio("Line", (ind) => {
+        group.addRadio("Line", () => {
             this.lineType = LineType.Line;
             this.drawConstruction();
         });
