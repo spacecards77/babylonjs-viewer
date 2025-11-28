@@ -17,18 +17,11 @@ export class SceneService {
     private drawService: DrawService | null = null;
     private lineType: LineType = LineType.Box;
 
-    createServices(scene: BABYLON.Scene) {
-        this.jsonService = new JsonService();
-        this.lineService = new LineService(scene, {lineWidth: 0.2, lineType: this.lineType});
-        this.drawService = new DrawService(this.lineService);
-    }
-
     createScene(engine: BABYLON.Engine, canvas: HTMLCanvasElement): BABYLON.Scene {
         const scene = this.createSceneWithCameraAndLight(engine, canvas);
 
         this.createServices(scene);
 
-        //UI
         const uiTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         this.createLineTypeRadio(uiTexture);
         this.createUploadButton(uiTexture);
@@ -38,6 +31,12 @@ export class SceneService {
         }
 
         return scene;
+    }
+
+    createServices(scene: BABYLON.Scene) {
+        this.jsonService = new JsonService();
+        this.lineService = new LineService(scene, {lineWidth: 0.2, lineType: this.lineType});
+        this.drawService = new DrawService(this.lineService);
     }
 
     private loadInitialData() {
@@ -60,7 +59,7 @@ export class SceneService {
         btnLoadJson.background = "green";
         btnLoadJson.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
         btnLoadJson.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-        btnLoadJson.left = "-320px";
+        btnLoadJson.left = "-120px";
         btnLoadJson.top = "-250px";
         uiTexture.addControl(btnLoadJson);
 
@@ -93,7 +92,7 @@ export class SceneService {
         lineTypeDropdown.height = "150px";
         lineTypeDropdown.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
         lineTypeDropdown.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-        lineTypeDropdown.left = "-320px";
+        lineTypeDropdown.left = "-120px";
         lineTypeDropdown.top = "-320px";
         lineTypeDropdown.color = "white";
         lineTypeDropdown.background = "green";
@@ -119,8 +118,8 @@ export class SceneService {
     private createSceneWithCameraAndLight(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
         const scene = new BABYLON.Scene(engine);
 
-        const camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 20, new BABYLON.Vector3(20, -20, 20), scene);
-        camera.setTarget(new BABYLON.Vector3(20, 20, 10));
+        const camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 20, new BABYLON.Vector3(15, -25, 40), scene);
+        camera.setTarget(new BABYLON.Vector3(15, 20, 10));
         camera.attachControl(canvas, true);
 
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
