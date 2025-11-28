@@ -7,6 +7,8 @@ import {UploadService} from './UploadService';
 import {DrawService} from "./DrawService";
 import {Construction} from "../entities";
 import {AdvancedDynamicTexture} from "babylonjs-gui/2D/advancedDynamicTexture";
+import {config} from "../config";
+import modelData from '../assets/modelData.json?raw';
 
 export class SceneService {
     private construction: Construction | null = null;
@@ -31,7 +33,23 @@ export class SceneService {
         this.createLineTypeRadio(uiTexture);
         this.createUploadButton(uiTexture);
 
+        if (config.jsonAutoload) {
+            this.loadInitialData();
+        }
+
         return scene;
+    }
+
+    private loadInitialData() {
+        if (this.jsonService) {
+            this.construction = this.jsonService.deserialize(modelData);
+
+            if (this.construction) {
+                this.drawConstruction();
+            } else {
+                console.error('Failed to deserialize construction from modelData.json.');
+            }
+        }
     }
 
     private createUploadButton(uiTexture: AdvancedDynamicTexture) {
@@ -107,6 +125,7 @@ export class SceneService {
 
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
         light.intensity = 0.5;
+
         return scene;
     }
 
