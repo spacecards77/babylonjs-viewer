@@ -1,5 +1,6 @@
 import * as BABYLON from 'babylonjs'
 import { SceneService } from './services/SceneService';
+import { config } from './config';
 export class AppOne {
     engine: BABYLON.Engine;
     scene: BABYLON.Scene;
@@ -15,8 +16,8 @@ export class AppOne {
 
     }
 
-    debug(debugOn: boolean = true) {
-        if (debugOn) {
+    debug() {
+        if (config.showInspector) {
             this.scene.debugLayer.show({ overlay: true });
         } else {
             this.scene.debugLayer.hide();
@@ -24,7 +25,7 @@ export class AppOne {
     }
 
     run() {
-        this.debug(true);
+        this.debug();
         this.engine.runRenderLoop(() => {
             this.scene.render();
         });
