@@ -6,6 +6,7 @@ import {LineService, LineType} from './LineService';
 import {UploadService} from './UploadService';
 import {DrawService} from "./DrawService";
 import {Construction} from "../entities";
+import {AdvancedDynamicTexture} from "babylonjs-gui/2D/advancedDynamicTexture";
 
 export class SceneService {
     private construction: Construction | null = null;
@@ -14,25 +15,55 @@ export class SceneService {
     private drawService: DrawService | null = null;
     private lineType: LineType = LineType.Box;
 
-    createScene(engine: BABYLON.Engine, canvas: HTMLCanvasElement): BABYLON.Scene {
-        const scene = new BABYLON.Scene(engine);
-
-        const camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 20, new BABYLON.Vector3(20, -20, 20), scene);
-        camera.setTarget(new BABYLON.Vector3(20, 20, 10));
-        camera.attachControl(canvas, true);
-
-        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-        light.intensity = 0.7;
-
-        //services
+    createServices(scene: BABYLON.Scene) {
         this.jsonService = new JsonService();
-        this.lineService = new LineService(scene, {lineWidth: 0.08});
+        this.lineService = new LineService(scene, {lineWidth: 0.2, lineType: this.lineType});
         this.drawService = new DrawService(this.lineService);
+    }
+
+    createScene(engine: BABYLON.Engine, canvas: HTMLCanvasElement): BABYLON.Scene {
+        const scene = this.createSceneWithCameraAndLight(engine, canvas);
+
+        this.createServices(scene);
 
         //UI
         const uiTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        this.createLineTypeRadio(uiTexture);
+        this.createUploadButton(uiTexture);
 
-        // TODO: Use structure like below
+        return scene;
+    }
+
+    private createUploadButton(uiTexture: AdvancedDynamicTexture) {
+        const btnLoadJson = GUI.Button.CreateSimpleButton("btnLoadJson", "Load Json");
+        btnLoadJson.width = "120px";
+        btnLoadJson.height = "40px";
+        btnLoadJson.color = "white";
+        btnLoadJson.background = "green";
+        btnLoadJson.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        btnLoadJson.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        btnLoadJson.left = "-320px";
+        btnLoadJson.top = "-250px";
+        uiTexture.addControl(btnLoadJson);
+
+        btnLoadJson.onPointerUpObservable.add(() => {
+            UploadService.uploadJson((jsonContent) => {
+                if (this.jsonService)
+                    this.construction = this.jsonService.deserialize(jsonContent);
+
+                //console.log('Deserialized construction:', this.construction);
+
+                if (this.construction) {
+                    this.drawConstruction();
+                } else {
+                    console.error('Failed to deserialize construction.');
+                }
+            });
+        });
+    }
+
+    private createLineTypeRadio(uiTexture: AdvancedDynamicTexture) {
+        // NEXT: Use structure like below
         /*const lineTypeOptions = [
             {text: "Box", value: LineType.Box},
             {text: "Cylinder", value: LineType.Cylinder},
@@ -63,34 +94,17 @@ export class SceneService {
         });
 
         lineTypeDropdown.addGroup(group);
+    }
 
+    private createSceneWithCameraAndLight(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
+        const scene = new BABYLON.Scene(engine);
 
-        const btnLoadJson = GUI.Button.CreateSimpleButton("btnLoadJson", "Load Json");
-        btnLoadJson.width = "120px";
-        btnLoadJson.height = "40px";
-        btnLoadJson.color = "white";
-        btnLoadJson.background = "green";
-        btnLoadJson.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        btnLoadJson.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-        btnLoadJson.left = "-320px";
-        btnLoadJson.top = "-250px";
-        uiTexture.addControl(btnLoadJson);
+        const camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 20, new BABYLON.Vector3(20, -20, 20), scene);
+        camera.setTarget(new BABYLON.Vector3(20, 20, 10));
+        camera.attachControl(canvas, true);
 
-        btnLoadJson.onPointerUpObservable.add(() => {
-            UploadService.uploadJson((jsonContent) => {
-                if (this.jsonService)
-                    this.construction = this.jsonService.deserialize(jsonContent);
-
-                //console.log('Deserialized construction:', this.construction);
-
-                if (this.construction) {
-                    this.drawConstruction();
-                } else {
-                    console.error('Failed to deserialize construction.');
-                }
-            });
-        });
-
+        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+        light.intensity = 0.7;
         return scene;
     }
 
