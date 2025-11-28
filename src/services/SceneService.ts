@@ -35,9 +35,9 @@ export class SceneService {
     }
 
     private createUploadButton(uiTexture: AdvancedDynamicTexture) {
-        const btnLoadJson = GUI.Button.CreateSimpleButton("btnLoadJson", "Load Json");
-        btnLoadJson.width = "120px";
-        btnLoadJson.height = "40px";
+        const btnLoadJson = GUI.Button.CreateSimpleButton("btnLoadJson", "Загрузить JSON");
+        btnLoadJson.width = "130px";
+        btnLoadJson.height = "60px";
         btnLoadJson.color = "white";
         btnLoadJson.background = "green";
         btnLoadJson.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
@@ -71,24 +71,26 @@ export class SceneService {
         ];*/
 
         const lineTypeDropdown = new GUI.SelectionPanel("lineTypePanel");
-        lineTypeDropdown.width = "120px";
+        lineTypeDropdown.width = "130px";
         lineTypeDropdown.height = "150px";
         lineTypeDropdown.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
         lineTypeDropdown.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         lineTypeDropdown.left = "-320px";
         lineTypeDropdown.top = "-320px";
+        lineTypeDropdown.color = "white";
+        lineTypeDropdown.background = "green";
         uiTexture.addControl(lineTypeDropdown);
 
-        const group = new GUI.RadioGroup("Line Type");
-        group.addRadio("Box", () => {
+        const group = new GUI.RadioGroup("Тип");
+        group.addRadio("Паралл.", () => {
             this.lineType = LineType.Box;
             this.drawConstruction();
         }, true);
-        group.addRadio("Cylinder", () => {
+        group.addRadio("Цилиндр", () => {
             this.lineType = LineType.Cylinder;
             this.drawConstruction();
         });
-        group.addRadio("Line", () => {
+        group.addRadio("Линия", () => {
             this.lineType = LineType.Line;
             this.drawConstruction();
         });
@@ -104,7 +106,7 @@ export class SceneService {
         camera.attachControl(canvas, true);
 
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-        light.intensity = 0.7;
+        light.intensity = 0.5;
         return scene;
     }
 
