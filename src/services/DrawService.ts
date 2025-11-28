@@ -1,12 +1,12 @@
 import * as BABYLON from 'babylonjs';
 import { Construction } from '../entities';
-import { LineService } from './LineService';
+import {LineService, LineType} from './LineService';
 
 export class DrawService {
     constructor(private lineService: LineService) {
     }
 
-    drawConstruction(construction: Construction) {
+    drawConstruction(construction: Construction, options?: { color?: BABYLON.Color3, lineType?: LineType }) {
         this.lineService.clearAllLines();
 
         const geom = construction.geometry;
@@ -20,7 +20,7 @@ export class DrawService {
             }
             const p1 = new BABYLON.Vector3(n1.x, n1.y, n1.z);
             const p2 = new BABYLON.Vector3(n2.x, n2.y, n2.z);
-            this.lineService.drawLine(p1, p2, { color: new BABYLON.Color3(0.2, 0.6, 0.9) });
+            this.lineService.drawLine(p1, p2, options);
         }
 
         console.log(`Model displayed: ${geom.members.length} members drawn`);

@@ -12,14 +12,21 @@ export class LineService {
     private readonly _lineWidth: number;
     private readonly _defaultLineType: LineType;
 
+    private _lineType: LineType;
+
     constructor(scene: BABYLON.Scene, options: { lineWidth: number, lineType?: LineType }) {
         this._scene = scene;
         this._lineWidth = options.lineWidth;
         this._defaultLineType = options.lineType ?? LineType.Box;
+        this._lineType = this._defaultLineType;
+    }
+
+    setLineType(lineType: LineType) {
+        this._lineType = lineType;
     }
 
     drawLine(start: BABYLON.Vector3, end: BABYLON.Vector3, options?: { color?: BABYLON.Color3, lineType?: LineType }): BABYLON.Mesh {
-        const lineType = options?.lineType ?? this._defaultLineType;
+        const lineType = options?.lineType ?? this._lineType;
         const distance = BABYLON.Vector3.Distance(start, end);
 
         let line: BABYLON.Mesh;
